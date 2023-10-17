@@ -74,3 +74,5 @@ function MyForm() {
 
 export default MyForm;
 
+I understand the importance of managing risk and controls in the work I do. I take ownership of managing risk and am committed to strengthening controls. As a new joiner, I've started taking steps to familiarize myself with the company's risk management policies and procedures. I'm looking forward to further enhancing my leadership skills to drive a culture of effective risk management and control in my area or function.
+
