@@ -75,4 +75,4 @@ function MyForm() {
 export default MyForm;
 
 I understand the importance of managing risk and controls in the work I do. I take ownership of managing risk and am committed to strengthening controls. As a new joiner, I've started taking steps to familiarize myself with the company's risk management policies and procedures. I'm looking forward to further enhancing my leadership skills to drive a culture of effective risk management and control in my area or function.
-
+I am dedicated to aligning my performance with the company's values and mindset. While I recognize that I am still relatively new to the organization, I am committed to continuous improvement and contributing positively to the company's culture and goals. I appreciate the opportunity to be a part of this team and look forward to further growth and development in the coming year.
