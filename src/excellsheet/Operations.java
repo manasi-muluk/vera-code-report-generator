@@ -74,4 +74,39 @@ function MyForm() {
 
 export default MyForm;
 
-I've consistently shown respect for my colleagues by valuing their diverse perspectives and contributions. I follow company policies with honesty and integrity, ensuring trust and reliability in my work. I'm committed to excellence by actively participating in training, skill development, and delivering high-quality results, as evident from my involvement in the hackathon. I empower myself and my team by actively seeking to learn and grow. I embrace challenges as opportunities for growth. I work to resolve issues, improve processes, and generate creative solutions.
+List<My> myList = new ArrayList<>();
+
+        Optional.ofNullable(responseWrapperDto)
+            .map(data -> data.getData())
+            .map(attr -> {
+                MyAttribute myAttribute = this.objectMapper.convertValue(attr.getAttributes(), MyAttribute.class);
+                return Optional.ofNullable(myAttribute.getEntities()).orElse(new ArrayList<>())
+                    .stream()
+                    .map(entity -> {
+                        My my = new My();
+                        my.setEntities(entity.getRecords().stream()
+                            .map(record -> {
+                                MyEntities myEntities = new MyEntities();
+                                myEntities.setName(entity.getName());
+                                myEntities.setRecords(record.getAttributes().stream()
+                                    .filter(attr -> "MY_REASON_DESCRIPTION".equalsIgnoreCase(attr.getKey()))
+                                    .map(attr -> {
+                                        MyRecords myRecords = new MyRecords();
+                                        myRecords.setStatus(record.getStatus());
+                                        myRecords.setId(record.getId());
+                                        MyEntitiesRecordsAttributes reasonAttr = new MyEntitiesRecordsAttributes();
+                                        reasonAttr.setKey(attr.getKey());
+                                        reasonAttr.setValue(attr.getValue());
+                                        myRecords.setAttributes(Collections.singletonList(reasonAttr));
+                                        return myRecords;
+                                    })
+                                    .collect(Collectors.toList()));
+                                return myEntities;
+                            })
+                            .collect(Collectors.toList()));
+                        return my;
+                    })
+                    .forEach(myList::add);
+            });
+
+        return myList;
