@@ -11,31 +11,26 @@ public interface Operations {
 	
 }
 
-List<My> myList = new ArrayList<>();
-        Optional.ofNullable(responseWrapperDto).map(data -> data.getData()).ifPresent(attr -> {
-            MyAttribute myAttribute = this.objectMapper.convertValue(attr.getAttributes(), MyAttribute.class);
-            Optional.ofNullable(myAttribute.getEntities()).ifPresent(entities -> {
-                myList = entities.stream()
-                        .map(entity -> {
-                            List<MyEntitiesRecordsInfo> reasons = entity.getRecords().stream()
-                                    .flatMap(record -> record.getAttributes().stream())
-                                    .filter(attrInfo -> "MY_REASON_DESCRIPTION".equalsIgnoreCase(attrInfo.getKey()))
-                                    .map(attrInfo -> MyEntitiesRecordsInfo.builder()
-                                            .key(attrInfo.getKey())
-                                            .value(attrInfo.getValue())
-                                            .build())
-                                    .collect(Collectors.toList());
+return Optional.ofNullable(responseWrapperDto)
+                .map(data -> data.getData())
+                .map(attr -> {
+                    final MyAttribute myAttribute = this.objectMapper.convertValue(attr.getAttributes(), MyAttribute.class);
+                    return Optional.ofNullable(myAttribute.getEntities())
+                            .orElse(List.of())
+                            .stream()
+                            .flatMap(entities -> entities.getRecords().stream())
+                            .map(record -> {
+                                Optional<MyEntitiesRecordsAttributes> myEntitiesAttributes = record.getAttributes()
+                                        .stream()
+                                        .filter(vc -> "MY_REASON_DESCRIPTION".equalsIgnoreCase(vc.getKey()))
+                                        .findFirst();
 
-                            // Assuming you have an existing list of MyEntities
-                            List<MyEntities> existingEntities = entity.getRecords().stream()
-                                    .map(record -> new MyEntities(record.getName(), null)) // You may need to adjust this part
-                                    .collect(Collectors.toList());
-
-                            return My.builder()
-                                    .entities(existingEntities) // Add your existing entities here
-                                    .build();
-                        })
-                        .collect(Collectors.toList());
-            });
-        });
-        return myList;
+                                return myEntitiesAttributes.map(attr -> {
+                                    MyEntitiesRecordsInfo info = new MyEntitiesRecordsInfo(attr.getKey(), attr.getValue());
+                                    return new My(info);
+                                }).orElse(null);
+                            })
+                            .filter(info -> info != null)
+                            .collect(Collectors.toList());
+                })
+                .orElse(null);
