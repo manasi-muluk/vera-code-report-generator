@@ -11,14 +11,12 @@ public interface Operations {
 	
 }
 
- List<String> reasons = new ArrayList<>();
-
-        Optional.ofNullable(responseWrapperDto)
+ return Optional.ofNullable(responseWrapperDto)
                 .map(data -> data.getData())
                 .map(attr -> {
                     final MyAttribute myAttribute = this.objectMapper.convertValue(attr.getAttributes(), MyAttribute.class);
                     return Optional.ofNullable(myAttribute.getEntities())
-                            .orElse(new ArrayList<>())
+                            .orElse(List.of())
                             .stream()
                             .flatMap(entities -> entities.getRecords().stream())
                             .map(record -> {
@@ -27,9 +25,9 @@ public interface Operations {
                                         .filter(vc -> "MY_REASON_DESCRIPTION".equalsIgnoreCase(vc.getKey()))
                                         .findFirst();
 
-                                return myEntitiesAttributes.map(attr -> attr.getValue()).orElse("");
+                                return myEntitiesAttributes.map(attr -> attr.getValue()).orElse(null);
                             })
-                            .forEach(reasons::add);
-                });
-
-        return reasons;
+                            .filter(info -> info != null)
+                            .collect(Collectors.toList());
+                })
+                .orElse(List.of());
