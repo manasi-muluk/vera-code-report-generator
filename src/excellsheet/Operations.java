@@ -11,20 +11,19 @@ public interface Operations {
 	
 }
 
-Optional.ofNullable(responseWrapperDto).map(data -> data.getData()).ifPresent(attr -> {
+List<My> myList = new ArrayList<>();
+        Optional.ofNullable(responseWrapperDto).map(data -> data.getData()).ifPresent(attr -> {
             MyAttribute myAttribute = this.objectMapper.convertValue(attr.getAttributes(), MyAttribute.class);
             Optional.ofNullable(myAttribute.getEntities()).ifPresent(entities -> {
-                myList = entities.stream()
+                myList.addAll(entities.stream()
                         .map(entity -> {
                             List<MyEntitiesRecordsInfo> reasons = entity.getRecords().stream()
                                     .flatMap(record -> record.getAttributes().stream())
                                     .filter(attrInfo -> "MY_REASON_DESCRIPTION".equalsIgnoreCase(attrInfo.getKey()))
-                                    .map(attrInfo -> {
-                                        return MyEntitiesRecordsInfo.builder()
-                                                .key(attrInfo.getKey())
-                                                .value(attrInfo.getValue())
-                                                .build();
-                                    })
+                                    .map(attrInfo -> MyEntitiesRecordsInfo.builder()
+                                            .key(attrInfo.getKey())
+                                            .value(attrInfo.getValue())
+                                            .build())
                                     .collect(Collectors.toList());
 
                             return My.builder().entities(reasons).build();
@@ -33,4 +32,5 @@ Optional.ofNullable(responseWrapperDto).map(data -> data.getData()).ifPresent(at
             });
         });
         return myList;
-
+    }
+}
