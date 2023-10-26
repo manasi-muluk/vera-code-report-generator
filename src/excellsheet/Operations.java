@@ -15,7 +15,7 @@ List<My> myList = new ArrayList<>();
         Optional.ofNullable(responseWrapperDto).map(data -> data.getData()).ifPresent(attr -> {
             MyAttribute myAttribute = this.objectMapper.convertValue(attr.getAttributes(), MyAttribute.class);
             Optional.ofNullable(myAttribute.getEntities()).ifPresent(entities -> {
-                myList.addAll(entities.stream()
+                myList = entities.stream()
                         .map(entity -> {
                             List<MyEntitiesRecordsInfo> reasons = entity.getRecords().stream()
                                     .flatMap(record -> record.getAttributes().stream())
@@ -26,11 +26,16 @@ List<My> myList = new ArrayList<>();
                                             .build())
                                     .collect(Collectors.toList());
 
-                            return My.builder().entities(reasons).build();
+                            // Assuming you have an existing list of MyEntities
+                            List<MyEntities> existingEntities = entity.getRecords().stream()
+                                    .map(record -> new MyEntities(record.getName(), null)) // You may need to adjust this part
+                                    .collect(Collectors.toList());
+
+                            return My.builder()
+                                    .entities(existingEntities) // Add your existing entities here
+                                    .build();
                         })
                         .collect(Collectors.toList());
             });
         });
         return myList;
-    }
-}
